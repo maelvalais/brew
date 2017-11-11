@@ -55,3 +55,35 @@ You can provide your tap users with custom `brew` commands by adding them in a
 
 See [homebrew/aliases](https://github.com/Homebrew/homebrew-aliases) for an
 example of a tap with external commands.
+
+
+## Use Travis CI to test and bottle your formulae
+
+The idea is to use the staged
+1) `brew test-bot` on every architecture you cant to support (e.g., linux,
+   sierra, high_sierra...)
+
+### Tricks I want to remember when I set up Travis CI
+
+1) when using `brew test-bot`, never use `--ci-pr`, `--ci-master`,
+   `--ci-testing` on your mac as it is going to remove everything installed.
+   You can still use `brew test-bot` and `brew test-bot --ci-upload`.
+
+### Drawbacks w.r.t. bottles when maintaining a tap relying on core formulae
+
+On the homebrew-core repo, whenever a formula on which some other formulae
+are relying on is updated, we also must rebuild the bottles of these dependent
+formulae (this is why we have the revision number `_1` after the actual version
+number). This seems to be automatically taken care of on the homebrew-core
+tap.
+
+On your own tap, this revision bump whenever a dependency bottle gets rebuilt
+can lead to broken bottles. This problem has not been solved yet, but:
+
+1) may be we could rely on a cron job that tests the bottles every week to check
+   if the bottle still works;
+2) or we could subscribe to the changes on the formulae we depend on and
+   run a script on a Travis CI build
+
+Both solutions require a lot a thoughts, that is why I did not do anything
+about it. I only rely on `gmp` at runtime so maybe it is fine...
