@@ -17,6 +17,9 @@
 #:    If `--pinned` is passed, show the versions of pinned formulae, or only the
 #:    specified (pinned) formulae if <formulae> are given.
 #:    See also `pin`, `unpin`.
+#:
+#:    If `--unlinked` is passed, show the installed formulae that are
+#:    unlinked (except for keg-only formulae).
 
 require "metafiles"
 require "formula"
@@ -35,7 +38,7 @@ module Homebrew
       return
     end
 
-    if ARGV.include?("--pinned") || ARGV.include?("--versions")
+    if ARGV.include?("--pinned") || ARGV.include?("--versions") || ARGV.include?("--unlinked")
       filtered_list
     elsif ARGV.named.empty?
       if ARGV.include? "--full-name"
@@ -105,6 +108,9 @@ module Homebrew
         Homebrew.failed = true unless rack.exist?
         rack.exist?
       end
+    end
+    if ARGV.include? "--unlinked"
+      names = names.select { |name| !Formula[name.basename.to_s].keg_only? && name.subdirs.select{ |d| Keg.for(d).linked? }.empty?}
     end
     if ARGV.include? "--pinned"
       pinned_versions = {}
