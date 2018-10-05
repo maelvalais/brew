@@ -856,7 +856,7 @@ module Homebrew
         return if UNSTABLE_ALLOWLIST[formula.name] == version_prefix
         return if UNSTABLE_DEVEL_ALLOWLIST[formula.name] == version_prefix
 
-        problem "Stable version URLs should not contain #{matched}"
+        opoo "Stable version URLs should not contain #{matched}"
       when %r{download\.gnome\.org/sources}, %r{ftp\.gnome\.org/pub/GNOME/sources}i
         version_prefix = stable.version.major_minor
         return if GNOME_DEVEL_ALLOWLIST[formula.name] == version_prefix
